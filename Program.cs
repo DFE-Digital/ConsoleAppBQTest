@@ -17,6 +17,7 @@ try
     string projectId = ConfigurationManager.AppSettings["projectid"];
     string datasetId = ConfigurationManager.AppSettings["datasetid"];
     string seDatasetId = ConfigurationManager.AppSettings["sedatasetid"];
+    string seTableName = ConfigurationManager.AppSettings["setablename"];
 
     SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
 
@@ -30,7 +31,7 @@ try
     BigQueryClient client = BigQueryClient.Create(projectId, credentials);
 
 
-    DeleteDataFromBQTables(client);
+    DeleteDataFromBQTables(client, datasetId, seDatasetId, seTableName);
     Thread.Sleep(120000);
 
     InsertEventRecordsToBQInBatches(builder, client, datasetId);
@@ -39,7 +40,7 @@ try
     InsertTTASignupRecordsToBQInBatches(builder, client, datasetId);
     InsertApplicationRecordsToBQInBatches(builder, client, datasetId);
     InsertProfileRecordsToBQInBatches(builder, client, datasetId);
-    InsertSchoolExperienceRecordsToBQInBatches(builder, client, seDatasetId);
+    InsertSchoolExperienceRecordsToBQInBatches(builder, client, seDatasetId, seTableName);
 }
 catch (Exception ex)
 {
@@ -47,35 +48,49 @@ catch (Exception ex)
 }
 
 
-void DeleteDataFromBQTables(BigQueryClient client)
+void DeleteDataFromBQTables(BigQueryClient client, string dataSetId, string seDataSetId, string seTableName)
 {    
     BigQueryParameter[] parameters = null;
 
-    string sql = @"TRUNCATE TABLE `get-into-teaching.transactions.events`";    
+    //string sql = @"TRUNCATE TABLE `get-into-teaching.transactions.events`";
+    string sql = $"TRUNCATE TABLE `get-into-teaching.{dataSetId}.events`";
+    LogMessage($"Event Records delete - SQL:{sql}");
     client.ExecuteQuery(sql, parameters);
     LogMessage($"Event Records deleted - End Time:{DateTime.Now.ToString()}");
 
-    sql = @"TRUNCATE TABLE `get-into-teaching.transactions.event_registrations`";
+    //sql = @"TRUNCATE TABLE `get-into-teaching.transactions.event_registrations`";
+    sql = $"TRUNCATE TABLE `get-into-teaching.{dataSetId}.event_registrations`";
+    LogMessage($"Event Registration Records delete - SQL:{sql}");
     client.ExecuteQuery(sql, parameters);
     LogMessage($"Event Registration Records deleted - End Time:{DateTime.Now.ToString()}");
 
-    sql = @"TRUNCATE TABLE `get-into-teaching.transactions.mailing_list_subscriptions`";
+    //sql = @"TRUNCATE TABLE `get-into-teaching.transactions.mailing_list_subscriptions`";
+    sql = $"TRUNCATE TABLE `get-into-teaching.{dataSetId}.mailing_list_subscriptions`";
+    LogMessage($"Mailing List Subscription Records delete - SQL:{sql}");
     client.ExecuteQuery(sql, parameters);
     LogMessage($"Mailing List Subscription Records deleted - End Time:{DateTime.Now.ToString()}");
 
-    sql = @"TRUNCATE TABLE `get-into-teaching.transactions.teacher_training_adviser_signups`";
+    //sql = @"TRUNCATE TABLE `get-into-teaching.transactions.teacher_training_adviser_signups`";
+    sql = $"TRUNCATE TABLE `get-into-teaching.{dataSetId}.teacher_training_adviser_signups`";
+    LogMessage($"Teacher Training Adviser Signup Records delete - SQL:{sql}");
     client.ExecuteQuery(sql, parameters);
     LogMessage($"Teacher Training Adviser Signup Records deleted - End Time:{DateTime.Now.ToString()}");
 
-    sql = @"TRUNCATE TABLE `get-into-teaching.transactions.applications`";
+    //sql = @"TRUNCATE TABLE `get-into-teaching.transactions.applications`";
+    sql = $"TRUNCATE TABLE `get-into-teaching.{dataSetId}.applications`";
+    LogMessage($"Applications Records delete - SQL:{sql}");
     client.ExecuteQuery(sql, parameters);
     LogMessage($"Applications Records deleted - End Time:{DateTime.Now.ToString()}");
 
-    sql = @"TRUNCATE TABLE `get-into-teaching.transactions.profile`";
+    //sql = @"TRUNCATE TABLE `get-into-teaching.transactions.profile`";
+    sql = $"TRUNCATE TABLE `get-into-teaching.{dataSetId}.profile`";
+    LogMessage($"Profile Records delete - SQL:{sql}");
     client.ExecuteQuery(sql, parameters);
     LogMessage($"Profile Records deleted - End Time:{DateTime.Now.ToString()}");
 
-    sql = @"TRUNCATE TABLE `get-into-teaching.school_experience.school_experience_requests`";
+    //sql = @"TRUNCATE TABLE `get-into-teaching.school_experience.school_experience_requests`";
+    sql = $"TRUNCATE TABLE `get-into-teaching.{seDataSetId}.{seTableName}`";
+    LogMessage($"School Experience Requests Records delete - SQL:{sql}");
     client.ExecuteQuery(sql, parameters);
     LogMessage($"School Experience Requests Records deleted - End Time:{DateTime.Now.ToString()}");    
 }
@@ -576,7 +591,7 @@ static void InsertProfileRecordsToBQInBatches(SqlConnectionStringBuilder builder
     LogMessage($"Profile Records - EndTime:{DateTime.Now.ToString()}");
 }
 
-static void InsertSchoolExperienceRecordsToBQInBatches(SqlConnectionStringBuilder builder, BigQueryClient client, string datasetId)
+static void InsertSchoolExperienceRecordsToBQInBatches(SqlConnectionStringBuilder builder, BigQueryClient client, string datasetId, string tableName)
 {
     LogMessage($"School Experience Records - StartTime:{DateTime.Now.ToString()}");
     var dataSet = DataLogic.GetSchoolExperienceRecordsFromCRM(builder.ConnectionString);
@@ -635,7 +650,7 @@ static void InsertSchoolExperienceRecordsToBQInBatches(SqlConnectionStringBuilde
                     counter++;
                     if (counter % 1000 == 0 || counter == totalRecordsCount)
                     {
-                        client.InsertRows(datasetId, "school_experience_requests", rows.ToArray());
+                        client.InsertRows(datasetId, tableName, rows.ToArray());
                         rows.Clear();
                     }                    
                 }
