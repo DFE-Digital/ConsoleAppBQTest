@@ -569,7 +569,26 @@ static void InsertProfileRecordsToBQInBatches(SqlConnectionStringBuilder builder
                     {
                         insert.Add("recruitment_stage", row.ItemArray[18].ToString());
                     }
-
+                    if (row.ItemArray[19] != null && row.ItemArray[19] != System.DBNull.Value)
+                    {
+                        insert.Add("date_of_birth", Convert.ToDateTime(row.ItemArray[19]).ToString("yyyy-MM-dd"));
+                    }
+                    if (row.ItemArray[20] != null && row.ItemArray[20] != System.DBNull.Value)
+                    {
+                        insert.Add("itt_start_year", row.ItemArray[20].ToString());
+                    }
+                    if (row.ItemArray[21] != null && row.ItemArray[21] != System.DBNull.Value)
+                    {
+                        insert.Add("has_qts", row.ItemArray[21].ToString());
+                    }
+                    if (row.ItemArray[22] != null && row.ItemArray[22] != System.DBNull.Value)
+                    {
+                        insert.Add("preferred_region_1", row.ItemArray[22].ToString());
+                    }
+                    if (row.ItemArray[23] != null && row.ItemArray[23] != System.DBNull.Value)
+                    {
+                        insert.Add("preferred_region_2", row.ItemArray[23].ToString());
+                    }
                     rows.Add(insert);
                     counter++;
                     if (counter % 1000 == 0 || counter == totalRecordsCount)

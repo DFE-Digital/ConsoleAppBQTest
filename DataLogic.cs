@@ -48,7 +48,7 @@ namespace ConsoleAppBQTest
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sQuery = $"SELECT [id],[journey_stage],[degree_status],[preferred_teaching_subject_1],[preferred_teaching_subject_2],[has_postcode],[has_date_of_birth],[adviser_assigned_at],[adviser_assigned_on],[has_adviser],[international],[returner],[country],[creation_channel],[created_via_git_bat_sync],[duplicate],[created_at],[created_on],[recruitment_stage] FROM [git].[profile]";
+                    string sQuery = $"SELECT [id],[journey_stage],[degree_status],[preferred_teaching_subject_1],[preferred_teaching_subject_2],[has_postcode],[has_date_of_birth],[adviser_assigned_at],[adviser_assigned_on],[has_adviser],[international],[returner],[country],[creation_channel],[created_via_git_bat_sync],[duplicate],[created_at],[created_on],[recruitment_stage],[date_of_birth],[itt_start_year],[dfe_qtsstatus],[preferred_region_1],[preferred_region_2]  FROM [git].[profile]";
 
                     using (SqlDataAdapter adapter = new SqlDataAdapter(sQuery, connection))
                     {
