@@ -589,6 +589,10 @@ static void InsertProfileRecordsToBQInBatches(SqlConnectionStringBuilder builder
                     {
                         insert.Add("preferred_region_2", row.ItemArray[23].ToString());
                     }
+                    if (row.ItemArray[24] != null && row.ItemArray[24] != System.DBNull.Value)
+                    {
+                        insert.Add("consideration_stage", row.ItemArray[24].ToString());
+                    }
                     rows.Add(insert);
                     counter++;
                     if (counter % 1000 == 0 || counter == totalRecordsCount)
