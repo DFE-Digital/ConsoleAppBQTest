@@ -125,11 +125,11 @@ static void InsertEventRecordsToBQInBatches(SqlConnectionStringBuilder builder, 
                     }
                     if (row.ItemArray[2] != null && row.ItemArray[2] != System.DBNull.Value)
                     {
-                        insert.Add("starts_at", Convert.ToDateTime(row.ItemArray[2]).ToString("yyyy-MM-dd"));
+                        insert.Add("starts_at", Convert.ToDateTime(row.ItemArray[2]).ToString("yyyy-MM-dd HH:mm:ss"));
                     }
                     if (row.ItemArray[3] != null && row.ItemArray[3] != System.DBNull.Value)
                     {
-                        insert.Add("finishes_at", Convert.ToDateTime(row.ItemArray[3]).ToString("yyyy-MM-dd"));
+                        insert.Add("finishes_at", Convert.ToDateTime(row.ItemArray[3]).ToString("yyyy-MM-dd HH:mm:ss"));
                     }
                     if (row.ItemArray[4] != null && row.ItemArray[4] != System.DBNull.Value)
                     {
@@ -215,7 +215,7 @@ static void InsertEventRegistrationRecordsToBQInBatches(SqlConnectionStringBuild
                     }
                     if (row.ItemArray[4] != null && row.ItemArray[4] != System.DBNull.Value)
                     {
-                        insert.Add("registered_at", Convert.ToDateTime(row.ItemArray[4]).ToString("yyyy-MM-dd"));
+                        insert.Add("registered_at", Convert.ToDateTime(row.ItemArray[4]).ToString("yyyy-MM-dd HH:mm:ss"));
                     }
                     if (row.ItemArray[5] != null && row.ItemArray[5] != System.DBNull.Value)
                     {
@@ -223,7 +223,7 @@ static void InsertEventRegistrationRecordsToBQInBatches(SqlConnectionStringBuild
                     }
                     if (row.ItemArray[6] != null && row.ItemArray[6] != System.DBNull.Value)
                     {
-                        insert.Add("attendance_confirmed_at", Convert.ToDateTime(row.ItemArray[6]).ToString("yyyy-MM-dd"));
+                        insert.Add("attendance_confirmed_at", Convert.ToDateTime(row.ItemArray[6]).ToString("yyyy-MM-dd HH:mm:ss"));
                     }
                     if (row.ItemArray[7] != null && row.ItemArray[7] != System.DBNull.Value)
                     {
@@ -278,7 +278,7 @@ static void InsertMLSubscriptionRecordsToBQInBatches(SqlConnectionStringBuilder 
                     }
                     if (row.ItemArray[1] != null && row.ItemArray[1] != System.DBNull.Value)
                     {
-                        insert.Add("subscribed_at", Convert.ToDateTime(row.ItemArray[1]).ToString("yyyy-MM-dd"));
+                        insert.Add("subscribed_at", Convert.ToDateTime(row.ItemArray[1]).ToString("yyyy-MM-dd HH:mm:ss"));
                     }
                     if (row.ItemArray[2] != null && row.ItemArray[2] != System.DBNull.Value)
                     {
@@ -349,7 +349,7 @@ static void InsertTTASignupRecordsToBQInBatches(SqlConnectionStringBuilder build
                     }
                     if (row.ItemArray[1] != null && row.ItemArray[1] != System.DBNull.Value)
                     {
-                        insert.Add("signed_up_at", Convert.ToDateTime(row.ItemArray[1]).ToString("yyyy-MM-dd"));
+                        insert.Add("signed_up_at", Convert.ToDateTime(row.ItemArray[1]).ToString("yyyy-MM-dd HH:mm:ss"));
                     }
                     if (row.ItemArray[2] != null && row.ItemArray[2] != System.DBNull.Value)
                     {
@@ -416,7 +416,7 @@ static void InsertApplicationRecordsToBQInBatches(SqlConnectionStringBuilder bui
                     }
                     if (row.ItemArray[1] != null && row.ItemArray[1] != System.DBNull.Value)
                     {
-                        insert.Add("applied_at", Convert.ToDateTime(row.ItemArray[1]).ToString("yyyy-MM-dd"));
+                        insert.Add("applied_at", Convert.ToDateTime(row.ItemArray[1]).ToString("yyyy-MM-dd HH:mm:ss"));
                     }
                     if (row.ItemArray[2] != null && row.ItemArray[2] != System.DBNull.Value)
                     {
@@ -523,7 +523,7 @@ static void InsertProfileRecordsToBQInBatches(SqlConnectionStringBuilder builder
                     }
                     if (row.ItemArray[7] != null && row.ItemArray[7] != System.DBNull.Value)
                     {
-                        insert.Add("adviser_assigned_at", Convert.ToDateTime(row.ItemArray[7]).ToString("yyyy-MM-dd"));
+                        insert.Add("adviser_assigned_at", Convert.ToDateTime(row.ItemArray[7]).ToString("yyyy-MM-dd HH:mm:ss"));
                     }
                     if (row.ItemArray[8] != null && row.ItemArray[8] != System.DBNull.Value)
                     {
@@ -559,7 +559,7 @@ static void InsertProfileRecordsToBQInBatches(SqlConnectionStringBuilder builder
                     }
                     if (row.ItemArray[16] != null && row.ItemArray[16] != System.DBNull.Value)
                     {
-                        insert.Add("created_at", Convert.ToDateTime(row.ItemArray[16]).ToString("yyyy-MM-dd HH:MM:ss"));
+                        insert.Add("created_at", Convert.ToDateTime(row.ItemArray[16]).ToString("yyyy-MM-dd HH:mm:ss"));
                     }
                     if (row.ItemArray[17] != null && row.ItemArray[17] != System.DBNull.Value)
                     {
@@ -659,7 +659,7 @@ static void InsertSchoolExperienceRecordsToBQInBatches(SqlConnectionStringBuilde
                     if (row.ItemArray[6] != null && row.ItemArray[6] != System.DBNull.Value)
                     {
                         //insert.Add("event_occurred_at", Convert.ToDateTime(row.ItemArray[6]).ToString("yyyy-MM-dd HH:mm:ss"));
-                        insert.Add("event_occurred_at", Convert.ToDateTime(row.ItemArray[6]).ToString("yyyy-MM-dd"));
+                        insert.Add("event_occurred_at", Convert.ToDateTime(row.ItemArray[6]).ToString("yyyy-MM-dd HH:mm:ss"));
                     }
                     if (row.ItemArray[7] != null && row.ItemArray[7] != System.DBNull.Value)
                     {
