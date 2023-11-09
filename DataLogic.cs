@@ -48,7 +48,7 @@ namespace ConsoleAppBQTest
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sQuery = $"SELECT [id],[journey_stage],[degree_status],[preferred_teaching_subject_1],[preferred_teaching_subject_2],[has_postcode],[has_date_of_birth],[adviser_assigned_at],[adviser_assigned_on],[has_adviser],[international],[returner],[country],[creation_channel],[created_via_git_bat_sync],[duplicate],[created_at],[created_on],[recruitment_stage],[date_of_birth],[itt_start_year],[dfe_qtsstatus],[preferred_region_1],[preferred_region_2],[consideration_stage]  FROM [git].[profile]";
+                    string sQuery = $"SELECT [id],[journey_stage],[degree_status],[preferred_teaching_subject_1],[preferred_teaching_subject_2],[has_postcode],[has_date_of_birth],[adviser_assigned_at],[adviser_assigned_on],[has_adviser],[international],[returner],[country],[creation_channel],[created_via_git_bat_sync],[duplicate],[created_at],[created_on],[recruitment_stage],[date_of_birth],[itt_start_year],[dfe_qtsstatus],[preferred_region_1],[preferred_region_2],[consideration_stage],candidate_type,is_candidate_eligible_for_an_adviser,adviser_status,adviser_status_reason,re_register_status,current_adviser,current_adviser_team,previous_adviser,date_assigned_to_previous_adviser,date_released,postcode,right_to_study_in_the_uk,preferred_training_region,preferred_teaching_course,preferred_education_phase,has_GCSE_english,has_GCSE_maths,has_GCSE_science,has_dbs_certificate,issue_date_of_DBS_certificate,days_since_triaged FROM [git].[profile]";
 
                     using (SqlDataAdapter adapter = new SqlDataAdapter(sQuery, connection))
                     {
@@ -117,7 +117,7 @@ namespace ConsoleAppBQTest
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sQuery = $"SELECT [contact_id],[subscribed_at],[subscribed_on],[subscription_channel],[still_subscribed],[opted_out_of_all_emails],[opted_out_of_bulk_emails],[opted_out_of_post] FROM [git].[mailing_list_subscriptions]";
+                    string sQuery = $"SELECT [contact_id],[subscribed_at],[subscribed_on],[subscription_channel],[still_subscribed],[opted_out_of_all_emails],[opted_out_of_bulk_emails],[opted_out_of_post],[unsubscribe_reason] FROM [git].[mailing_list_subscriptions]";
 
                     using (SqlDataAdapter adapter = new SqlDataAdapter(sQuery, connection))
                     {
@@ -164,6 +164,34 @@ namespace ConsoleAppBQTest
                 {
                     connection.Open();
                     string sQuery = $"SELECT [contact_id],[applied_at],[applied_on],[phase],[status],[id],[recruitment_year],[application_complete],[success],[application_form_id],[dfe_applyid] FROM [git].[applications]";
+
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(sQuery, connection))
+                    {
+                        adapter.Fill(dataSet);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return dataSet;
+        }
+
+        /// <summary>
+        /// GetApplicationRecordsFromCRM
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <returns></returns>
+        internal static DataSet GetCandidateWorkexpErienceFromCRM(string connectionString)
+        {
+            DataSet dataSet = new DataSet();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sQuery = $"SELECT [contact_id] ,[job_title],[organisation],[country],[start_year],[end_year] FROM [git].[work_experience]";
 
                     using (SqlDataAdapter adapter = new SqlDataAdapter(sQuery, connection))
                     {
