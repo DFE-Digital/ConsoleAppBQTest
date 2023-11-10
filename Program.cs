@@ -32,7 +32,7 @@ try
 
 
     DeleteDataFromBQTables(client, datasetId, seDatasetId, seTableName);
-    Thread.Sleep(120000);
+   Thread.Sleep(120000);
 
     InsertEventRecordsToBQInBatches(builder, client, datasetId);
     InsertEventRegistrationRecordsToBQInBatches(builder, client, datasetId);
@@ -178,7 +178,8 @@ static void InsertEventRecordsToBQInBatches(SqlConnectionStringBuilder builder, 
                 catch (Exception ex)
                 {
                     errorCount++;
-                    LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()}");
+                  //  LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()}");
+                    LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()} - Error Message:{ex.Message}");
                 }
             }
         }
@@ -252,7 +253,8 @@ static void InsertEventRegistrationRecordsToBQInBatches(SqlConnectionStringBuild
                 catch (Exception ex)
                 {
                     errorCount++;
-                    LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()}");
+                    // LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()}");
+                    LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()} - Error Message:{ex.Message}");
                 }
             }
         }
@@ -327,7 +329,8 @@ static void InsertMLSubscriptionRecordsToBQInBatches(SqlConnectionStringBuilder 
                 catch (Exception ex)
                 {
                     errorCount++;
-                    LogMessage($"Error:{errorCount} - Contact Id: {row.ItemArray[0].ToString()}");
+                   // LogMessage($"Error:{errorCount} - Contact Id: {row.ItemArray[0].ToString()}");
+                    LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()} - Error Message:{ex.Message}");
                 }
             }
         }
@@ -394,7 +397,8 @@ static void InsertTTASignupRecordsToBQInBatches(SqlConnectionStringBuilder build
                 catch (Exception ex)
                 {
                     errorCount++;
-                    LogMessage($"Error:{errorCount} - Contact Id: {row.ItemArray[0].ToString()}");
+                  //  LogMessage($"Error:{errorCount} - Contact Id: {row.ItemArray[0].ToString()}");
+                    LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()} - Error Message:{ex.Message}");
                 }
             }
         }
@@ -477,7 +481,8 @@ static void InsertApplicationRecordsToBQInBatches(SqlConnectionStringBuilder bui
                 catch (Exception ex)
                 {
                     errorCount++;
-                    LogMessage($"Error:{errorCount} - Id: {row.ItemArray[5].ToString()}");
+                   // LogMessage($"Error:{errorCount} - Id: {row.ItemArray[5].ToString()}");
+                    LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()} - Error Message:{ex.Message}");
                 }
             }
         }
@@ -611,10 +616,10 @@ static void InsertProfileRecordsToBQInBatches(SqlConnectionStringBuilder builder
                         insert.Add("candidate_type", row.ItemArray[25].ToString());
                     }
                     //TODO this is not bool
-                    //if (row.ItemArray[26] != null && row.ItemArray[26] != System.DBNull.Value)
-                    //{
-                    //    insert.Add("is_candidate_eligible_for_an_adviser", row.ItemArray[26].ToString());
-                    //}
+                    if (row.ItemArray[26] != null && row.ItemArray[26] != System.DBNull.Value)
+                    {
+                        insert.Add("is_candidate_eligible_for_an_adviser", row.ItemArray[26].ToString());
+                    }
                     if (row.ItemArray[27] != null && row.ItemArray[27] != System.DBNull.Value)
                     {
                         insert.Add("adviser_status", row.ItemArray[27].ToString());
@@ -670,21 +675,21 @@ static void InsertProfileRecordsToBQInBatches(SqlConnectionStringBuilder builder
                     {
                         insert.Add("preferred_education_phase", row.ItemArray[39].ToString());
                     }
-                    //TODO this is not bool
-                    //if (row.ItemArray[40] != null && row.ItemArray[40] != System.DBNull.Value)
-                    //{
-                    //    insert.Add("has_GCSE_english", Convert.ToBoolean(row.ItemArray[40]));
-                    //}
-                    //TODO this is not bool
-                    //if (row.ItemArray[41] != null && row.ItemArray[41] != System.DBNull.Value)
-                    //{
-                    //    insert.Add("has_GCSE_maths", Convert.ToBoolean(row.ItemArray[41]));
-                    //}
-                    //TODO this is not bool
-                    //if (row.ItemArray[42] != null && row.ItemArray[42] != System.DBNull.Value)
-                    //{
-                    //    insert.Add("has_GCSE_science", Convert.ToBoolean(row.ItemArray[42]));
-                    //}
+                   
+                    if (row.ItemArray[40] != null && row.ItemArray[40] != System.DBNull.Value)
+                    {
+                        insert.Add("has_GCSE_english", row.ItemArray[40].ToString());
+                    }
+                   
+                    if (row.ItemArray[41] != null && row.ItemArray[41] != System.DBNull.Value)
+                    {
+                        insert.Add("has_GCSE_maths", row.ItemArray[41].ToString());
+                    }
+                   
+                    if (row.ItemArray[42] != null && row.ItemArray[42] != System.DBNull.Value)
+                    {
+                        insert.Add("has_GCSE_science", row.ItemArray[42].ToString());
+                    }
                     if (row.ItemArray[43] != null && row.ItemArray[43] != System.DBNull.Value)
                     {
                         insert.Add("has_dbs_certificate", Convert.ToBoolean(row.ItemArray[43]));
@@ -850,7 +855,8 @@ static void InsertCandidateWorkexpErienceRecordsToBQInBatches(SqlConnectionStrin
                 catch (Exception ex)
                 {
                     errorCount++;
-                    LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()}");
+                    // LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()}");
+                    LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()} - Error Message:{ex.Message}");
                 }
             }
 
