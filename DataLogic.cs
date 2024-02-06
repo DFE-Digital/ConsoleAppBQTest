@@ -109,6 +109,29 @@ namespace ConsoleAppBQTest
             return dataSet;
         }
 
+        internal static DataSet GetDegreeQualificationRecordsFromCRM(string connectionString)
+        {
+            DataSet dataSet = new DataSet();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sQuery = $"SELECT [contact_id],[qualification_type],[subject_name] ,[uk_degree_grade],[degree_status],[start_year],[end_year],[organisation_name],[country],[category] FROM [git].[degree_qualifications]";
+
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(sQuery, connection))
+                    {
+                        adapter.Fill(dataSet);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return dataSet;
+        }
+
         internal static DataSet GetMLSubscriptionRecordsFromCRM(string connectionString)
         {
             DataSet dataSet = new DataSet();

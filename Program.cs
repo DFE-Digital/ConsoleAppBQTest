@@ -32,7 +32,7 @@ try
 
 
     DeleteDataFromBQTables(client, datasetId, seDatasetId, seTableName);
-   Thread.Sleep(120000);
+    Thread.Sleep(120000);
 
     InsertEventRecordsToBQInBatches(builder, client, datasetId);
     InsertEventRegistrationRecordsToBQInBatches(builder, client, datasetId);
@@ -42,6 +42,7 @@ try
     InsertProfileRecordsToBQInBatches(builder, client, datasetId);
     InsertSchoolExperienceRecordsToBQInBatches(builder, client, seDatasetId, seTableName);
     InsertCandidateWorkexpErienceRecordsToBQInBatches(builder, client, datasetId);
+    InsertDegreeQualificationRecordsToBQInBatches(builder, client, datasetId);
 
 }
 catch (Exception ex)
@@ -52,7 +53,7 @@ catch (Exception ex)
 void DeleteDataFromBQTables(BigQueryClient client, string dataSetId, string seDataSetId, string seTableName)
 {    
     BigQueryParameter[] parameters = null;
-
+    
     //string sql = @"TRUNCATE TABLE `get-into-teaching.transactions.events`";
     string sql = $"TRUNCATE TABLE `get-into-teaching.{dataSetId}.events`";
     LogMessage($"Event Records delete - SQL:{sql}");
@@ -99,7 +100,13 @@ void DeleteDataFromBQTables(BigQueryClient client, string dataSetId, string seDa
     sql = $"TRUNCATE TABLE `get-into-teaching.{dataSetId}.work_experience`";
     LogMessage($"work_experience Records delete - SQL:{sql}");
     client.ExecuteQuery(sql, parameters);
-    LogMessage($"Candidate Work experience Records deleted - End Time:{DateTime.Now.ToString()}");
+    LogMessage($"Candidate Work experience Records deleted - End Time:{DateTime.Now.ToString()}");    
+
+    //sql = @"TRUNCATE TABLE `get-into-teaching.transactions.degree_qualifications`";
+    sql = $"TRUNCATE TABLE `get-into-teaching.{dataSetId}.degree_qualifications`";
+    LogMessage($"Degree Qualification Requests Records delete - SQL:{sql}");
+    client.ExecuteQuery(sql, parameters);
+    LogMessage($"Degree Qualification Requests Records deleted - End Time:{DateTime.Now.ToString()}");
 }
 
 //Batches code
@@ -864,6 +871,85 @@ static void InsertCandidateWorkexpErienceRecordsToBQInBatches(SqlConnectionStrin
         LogMessage($"Candidate Workexp Erience Records - Total Records Processed:{counter}");
     }
     LogMessage($"Candidate Workexp Erience Records - EndTime:{DateTime.Now.ToString()}");
+}
+
+static void InsertDegreeQualificationRecordsToBQInBatches(SqlConnectionStringBuilder builder, BigQueryClient client, string datasetId)
+{
+    LogMessage($"Degree Qualification Records - StartTime:{DateTime.Now}");
+    var dataSet = DataLogic.GetDegreeQualificationRecordsFromCRM(builder.ConnectionString);
+    if (dataSet != null && dataSet.Tables.Count > 0)
+    {
+        int errorCount = 0;
+        int counter = 0;
+        int totalRecordsCount = dataSet.Tables[0].Rows.Count;
+        List<BigQueryInsertRow> rows = new List<BigQueryInsertRow>();
+        foreach (DataRow row in dataSet.Tables[0].Rows)
+        {
+            if (row is not null)
+            {
+                try
+                {
+                    var insert = new BigQueryInsertRow();
+                    if (row.ItemArray[0] != null && row.ItemArray[0] != System.DBNull.Value)
+                    {
+                        insert.Add("contact_id", row.ItemArray[0].ToString());
+                    }
+                    if (row.ItemArray[1] != null && row.ItemArray[1] != System.DBNull.Value)
+                    {
+                        insert.Add("qualification_type", row.ItemArray[1]);
+                    }
+                    if (row.ItemArray[2] != null && row.ItemArray[2] != System.DBNull.Value)
+                    {
+                        insert.Add("subject_name", row.ItemArray[2]);
+                    }
+                    if (row.ItemArray[3] != null && row.ItemArray[3] != System.DBNull.Value)
+                    {
+                        insert.Add("uk_degree_grade", row.ItemArray[3]);
+                    }
+                    if (row.ItemArray[4] != null && row.ItemArray[4] != System.DBNull.Value)
+                    {
+                        insert.Add("degree_status", row.ItemArray[4]);
+                    }
+                    if (row.ItemArray[5] != null && row.ItemArray[5] != System.DBNull.Value)
+                    {
+                        insert.Add("start_year", Convert.ToInt16(row.ItemArray[5]));
+                    }
+                    if (row.ItemArray[6] != null && row.ItemArray[6] != System.DBNull.Value)
+                    {
+                        insert.Add("end_year", Convert.ToInt16(row.ItemArray[6]));
+                    }
+                    if (row.ItemArray[7] != null && row.ItemArray[7] != System.DBNull.Value)
+                    {
+                        insert.Add("organisation_name", row.ItemArray[7]);
+                    }
+                    if (row.ItemArray[8] != null && row.ItemArray[8] != System.DBNull.Value)
+                    {
+                        insert.Add("country", row.ItemArray[8]);
+                    }
+                    if (row.ItemArray[9] != null && row.ItemArray[9] != System.DBNull.Value)
+                    {
+                        insert.Add("category", row.ItemArray[9]);
+                    }
+
+                    rows.Add(insert);
+                    counter++;
+                    if (counter % 1000 == 0 || counter == totalRecordsCount)
+                    {
+                        client.InsertRows(datasetId, "degree_qualifications", rows.ToArray());
+                        rows.Clear();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    errorCount++;
+                    // LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()}");
+                    LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()} - Error Message:{ex.Message}");
+                }
+            }
+        }
+        LogMessage($"Degree Qualification  Records - Total Records Processed:{counter}");
+    }
+    LogMessage($"Degree Qualification Records - EndTime:{DateTime.Now}");
 }
 
 static void LogMessage(string message)
