@@ -43,6 +43,7 @@ try
     InsertSchoolExperienceRecordsToBQInBatches(builder, client, seDatasetId, seTableName);
     InsertCandidateWorkexpErienceRecordsToBQInBatches(builder, client, datasetId);
     InsertDegreeQualificationRecordsToBQInBatches(builder, client, datasetId);
+    InsertTTAStagesRecordsToBQInBatches(builder, client, datasetId);
 
 }
 catch (Exception ex)
@@ -107,6 +108,12 @@ void DeleteDataFromBQTables(BigQueryClient client, string dataSetId, string seDa
     LogMessage($"Degree Qualification Requests Records delete - SQL:{sql}");
     client.ExecuteQuery(sql, parameters);
     LogMessage($"Degree Qualification Requests Records deleted - End Time:{DateTime.Now.ToString()}");
+
+    //sql = @"TRUNCATE TABLE `get-into-teaching.transactions.tta_stages`";
+    sql = $"TRUNCATE TABLE `get-into-teaching.{dataSetId}.tta_stages`";
+    LogMessage($"TTA Stages Records delete - SQL:{sql}");
+    client.ExecuteQuery(sql, parameters);
+    LogMessage($"TTA Stages Records deleted - End Time:{DateTime.Now.ToString()}");
 }
 
 //Batches code
@@ -950,6 +957,85 @@ static void InsertDegreeQualificationRecordsToBQInBatches(SqlConnectionStringBui
         LogMessage($"Degree Qualification  Records - Total Records Processed:{counter}");
     }
     LogMessage($"Degree Qualification Records - EndTime:{DateTime.Now}");
+}
+
+static void InsertTTAStagesRecordsToBQInBatches(SqlConnectionStringBuilder builder, BigQueryClient client, string datasetId)
+{
+    LogMessage($"TTA Stages Records - StartTime:{DateTime.Now}");
+    var dataSet = DataLogic.GetTTAStagesRecordsFromCRM(builder.ConnectionString);
+    if (dataSet != null && dataSet.Tables.Count > 0)
+    {
+        int errorCount = 0;
+        int counter = 0;
+        int totalRecordsCount = dataSet.Tables[0].Rows.Count;
+        List<BigQueryInsertRow> rows = new List<BigQueryInsertRow>();
+        foreach (DataRow row in dataSet.Tables[0].Rows)
+        {
+            if (row is not null)
+            {
+                try
+                {
+                    var insert = new BigQueryInsertRow();
+                    if (row.ItemArray[0] != null && row.ItemArray[0] != System.DBNull.Value)
+                    {
+                        insert.Add("contact_id", row.ItemArray[0].ToString());
+                    }
+                    if (row.ItemArray[1] != null && row.ItemArray[1] != System.DBNull.Value)
+                    {
+                        insert.Add("stage_created_on", Convert.ToDateTime(row.ItemArray[1]).ToString("yyyy-MM-dd"));
+                    }
+                    if (row.ItemArray[2] != null && row.ItemArray[2] != System.DBNull.Value)
+                    {
+                        insert.Add("date", Convert.ToDateTime(row.ItemArray[2]).ToString("yyyy-MM-dd"));
+                    }
+                    if (row.ItemArray[3] != null && row.ItemArray[3] != System.DBNull.Value)
+                    {
+                        insert.Add("stage_name", row.ItemArray[3].ToString());
+                    }
+                    if (row.ItemArray[4] != null && row.ItemArray[4] != System.DBNull.Value)
+                    {
+                        insert.Add("current_owner", row.ItemArray[4].ToString());
+                    }
+                    if (row.ItemArray[5] != null && row.ItemArray[5] != System.DBNull.Value)
+                    {
+                        insert.Add("current_team", row.ItemArray[5].ToString());
+                    }
+                    if (row.ItemArray[6] != null && row.ItemArray[6] != System.DBNull.Value)
+                    {
+                        insert.Add("data_assigned_to_current_owner", row.ItemArray[6]);
+                    }
+                    if (row.ItemArray[7] != null && row.ItemArray[7] != System.DBNull.Value)
+                    {
+                        insert.Add("previous_owner", row.ItemArray[7].ToString());
+                    }
+                    if (row.ItemArray[8] != null && row.ItemArray[8] != System.DBNull.Value)
+                    {
+                        insert.Add("previous_team", row.ItemArray[8].ToString());
+                    }
+                    if (row.ItemArray[9] != null && row.ItemArray[9] != System.DBNull.Value)
+                    {
+                        insert.Add("date_assigned_to_previous_owner", row.ItemArray[9].ToString());
+                    }
+
+                    rows.Add(insert);
+                    counter++;
+                    if (counter % 1000 == 0 || counter == totalRecordsCount)
+                    {
+                        client.InsertRows(datasetId, "tta_stages", rows.ToArray());
+                        rows.Clear();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    errorCount++;
+                    // LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()}");
+                    LogMessage($"Error:{errorCount} - Id: {row.ItemArray[0].ToString()} - Error Message:{ex.Message}");
+                }
+            }
+        }
+        LogMessage($"TTA Stages Records - Total Records Processed:{counter}");
+    }
+    LogMessage($"TTA Stages Records - EndTime:{DateTime.Now}");
 }
 
 static void LogMessage(string message)
