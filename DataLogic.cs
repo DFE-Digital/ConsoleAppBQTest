@@ -228,5 +228,28 @@ namespace ConsoleAppBQTest
             }
             return dataSet;
         }
+
+        internal static DataSet GetTTAStagesRecordsFromCRM(string connectionString)
+        {
+            DataSet dataSet = new DataSet();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sQuery = $"SELECT [contact_id],[stage_created_on],[date],[stage_name],[current_owner],[current_team],[data_assigned_to_current_owner],[previous_owner],[previous_team],[date_assigned_to_previous_owner] FROM [git].[tta_stages]";
+
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(sQuery, connection))
+                    {
+                        adapter.Fill(dataSet);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return dataSet;
+        }
     }
 }
